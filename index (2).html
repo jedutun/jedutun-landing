@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jedutun: tu melodía, nota por nota</title>
+<meta name="description" content="Tararea o toca tu idea. Jedutun la transcribe sin cambiar ni una nota y la convierte en una pista con sonido profesional. Apúntate al acceso anticipado.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050507'/%3E%3Crect x='12' y='34' width='18' height='8' rx='3' fill='%23FFD60A'/%3E%3Crect x='34' y='22' width='18' height='8' rx='3' fill='%23FFD60A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050507; --ink:#F4F4EF; --muted:#9A9AA8; --yellow:#FFD60A; --line:#25252E;
+  --field:#0B0B11; --cyan:#3DE0FF; --violet:#8B5CF6; --hum:#3DE0FF;
+  --display:'Space Grotesk','Trebuchet MS',system-ui,sans-serif;
+  --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6;
+  background:
+    radial-gradient(900px 480px at 78% -8%,rgba(255,214,10,.13),transparent 62%),
+    radial-gradient(760px 460px at 4% 104%,rgba(139,92,246,.16),transparent 62%),
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/48px 48px,
+    var(--bg);
+  background-attachment:fixed;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+#net{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+header{padding:28px 0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;font-family:var(--mono);font-weight:500;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(61,224,255,.4);border-radius:999px;background:rgba(61,224,255,.06)}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.logo{font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:.02em;color:var(--ink)}
+.logo span{color:var(--yellow);text-shadow:0 0 14px rgba(255,214,10,.7)}
+
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding:32px 0 88px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.6rem,6.4vw,4.6rem);line-height:1.02;margin:0 0 24px;letter-spacing:-.025em}
+.lead{font-size:1.2rem;max-width:34em;color:var(--ink);margin:0 0 32px}
+.lead em{font-style:normal;color:var(--yellow)}
+.perk{max-width:34em;margin:0 0 22px;padding:12px 16px;border-left:3px solid var(--yellow);border-radius:0 10px 10px 0;background:rgba(255,214,10,.07);font-size:1rem;color:var(--ink)}
+.perk strong{color:var(--yellow);font-weight:500}
+.cta .perk{color:var(--ink);margin-bottom:28px}
+.term{min-height:1.7em;margin:0 0 20px;font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--cyan)}
+.cur{display:inline-block;width:8px;height:1.05em;margin-left:4px;background:var(--cyan);vertical-align:-3px;box-shadow:0 0 8px var(--cyan);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* Formulario: tarjeta futurista */
+.signup{
+  position:relative;display:flex;flex-wrap:wrap;gap:12px;max-width:540px;padding:22px;
+  background:linear-gradient(160deg,rgba(255,214,10,.07),rgba(255,214,10,.015));
+  border:1px solid rgba(255,214,10,.42);border-radius:14px;
+  box-shadow:0 0 0 1px rgba(255,214,10,.06),0 0 44px rgba(255,214,10,.12),inset 0 0 30px rgba(255,214,10,.04)
+}
+.signup::before,.signup::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--yellow);pointer-events:none}
+.signup::before{top:-2px;left:-2px;border-right:0;border-bottom:0;border-top-left-radius:14px}
+.signup::after{bottom:-2px;right:-2px;border-left:0;border-top:0;border-bottom-right-radius:14px;border-color:var(--cyan)}
+.signup .tag{flex:1 1 100%;margin:0;font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow)}
+.signup .tag::before{content:"";display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow);vertical-align:1px}
+.signup input{flex:1 1 230px;min-width:0;padding:15px 16px;font:inherit;color:var(--ink);background:var(--field);border:1.5px solid #34343F;border-radius:10px;transition:border-color .2s,box-shadow .2s}
+.signup input::placeholder{color:var(--muted)}
+.signup input:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,214,10,.22),0 0 18px rgba(255,214,10,.25)}
+.signup button{padding:15px 24px;font:inherit;font-family:var(--display);font-weight:700;color:#050507;background:var(--yellow);border:0;border-radius:10px;cursor:pointer;box-shadow:0 0 22px rgba(255,214,10,.4);transition:box-shadow .2s,transform .15s}
+.signup button:hover{box-shadow:0 0 34px rgba(255,214,10,.65);transform:translateY(-1px)}
+.signup button:active{transform:translateY(0)}
+.signup .msg{flex:1 1 100%;margin:2px 0 0;font-size:.9rem;color:var(--muted)}
+.signup .msg.ok{color:var(--yellow);font-weight:500;font-size:1rem}
+.signup .msg.err{color:#FF8A7A}
+
+.viz{width:100%;height:auto}
+.viz text{font:500 12px var(--mono);fill:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.viz .grid{stroke:var(--line);stroke-width:1}
+.viz .ro{fill:var(--cyan);font-size:10.5px;opacity:.85}
+.viz .nl{fill:var(--yellow);font-size:11px;opacity:0;animation:fade .4s ease-out forwards}
+.viz .scan{stroke:var(--cyan);stroke-width:1.5;opacity:0;filter:drop-shadow(0 0 6px var(--cyan));animation:scan 5s linear 3s infinite}
+@keyframes fade{to{opacity:1}}
+@keyframes scan{0%{transform:translateX(0);opacity:0}8%{opacity:.85}92%{opacity:.85}100%{transform:translateX(520px);opacity:0}}
+.viz .hum{fill:none;stroke:var(--hum);stroke-width:3;stroke-linecap:round;stroke-dasharray:640;stroke-dashoffset:640;opacity:.85;animation:draw 1.7s ease-out .3s forwards}
+.viz .note{fill:var(--yellow);filter:drop-shadow(0 0 6px rgba(255,214,10,.65));transform-box:fill-box;transform-origin:left center;transform:scaleX(0);animation:grow .45s ease-out forwards}
+.viz .note:nth-of-type(1){animation-delay:1.9s}.viz .note:nth-of-type(2){animation-delay:2.05s}
+.viz .note:nth-of-type(3){animation-delay:2.2s}.viz .note:nth-of-type(4){animation-delay:2.35s}
+.viz .note:nth-of-type(5){animation-delay:2.5s}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes grow{to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){
+  .viz .hum{animation:none;stroke-dashoffset:0}
+  .viz .note{animation:none;transform:none}
+  .viz .nl{animation:none;opacity:1}
+  .viz .scan{display:none}
+  .chip::before,.cur{animation:none}
+  .signup button{transition:none}
+}
+
+section{padding:72px 0;border-top:1px solid var(--line)}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1;margin:0 0 32px;letter-spacing:-.02em;max-width:18em}
+h3{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:0 0 8px}
+p{margin:0 0 12px}
+
+.contrast{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.contrast>div{padding-left:20px;border-left:3px solid var(--line)}
+.contrast .us{border-left-color:var(--yellow);box-shadow:-8px 0 24px -14px rgba(255,214,10,.55)}
+.contrast p{color:var(--muted);max-width:30em}
+.contrast .us p{color:var(--ink)}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:28px;counter-reset:s}
+.steps li{counter-increment:s;padding-top:16px;border-top:2px solid var(--line)}
+.steps li::before{content:"0" counter(s);display:block;font-family:var(--mono);font-weight:500;font-size:1.6rem;color:var(--yellow);line-height:1;margin-bottom:14px;text-shadow:0 0 14px rgba(255,214,10,.5)}
+.steps p{color:var(--muted);font-size:1rem}
+
+.cta{text-align:left}
+.cta p{color:var(--muted);max-width:32em;margin-bottom:28px}
+footer{padding:36px 0 48px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:32px;padding-bottom:64px}
+  .contrast{grid-template-columns:1fr;gap:28px}
+  .steps{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){
+  .wrap{padding:0 18px}
+  .steps{grid-template-columns:1fr}
+  .signup{padding:18px}
+  .signup button{flex:1 1 100%}
+}
+</style>
+</head>
+<body>
+<canvas id="net" aria-hidden="true"></canvas>
+
+<header>
+  <div class="wrap bar"><div class="logo">Jedutun<span>.</span></div><span class="chip">IA musical · Beta próximamente</span></div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Tu melodía es sagrada.</h1>
+        <p class="lead">Tararea o toca tu idea. Jedutun la transcribe <em>nota por nota</em>, sin cambiar nada, y la convierte en una pista con sonido profesional.</p>
+        <p class="perk">Los primeros 100 músicos serán <strong>Pioneros</strong> y tendrán mayores beneficios cuando abra la beta.</p>
+        <p class="term" aria-hidden="true"><span id="typed"></span><i class="cur"></i></p>
+        <form class="signup" action="https://formspree.io/f/xvkavpdo" method="POST" novalidate>
+          <p class="tag">Acceso anticipado</p>
+          <label class="sr" for="email-1">Tu correo electrónico</label>
+          <input id="email-1" name="email" type="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com">
+          <button type="submit">Quiero acceso anticipado</button>
+          <p class="msg" role="status">Solo usaremos tu correo para avisarte cuando abra la beta.</p>
+        </form>
+      </div>
+
+      <svg class="viz" viewBox="0 0 520 300" role="img" aria-label="Una línea ondulada que representa un tarareo se convierte en notas exactas sobre una cuadrícula musical">
+        <g>
+          <line class="grid" x1="0" y1="60" x2="520" y2="60"/>
+          <line class="grid" x1="0" y1="100" x2="520" y2="100"/>
+          <line class="grid" x1="0" y1="140" x2="520" y2="140"/>
+          <line class="grid" x1="0" y1="180" x2="520" y2="180"/>
+          <line class="grid" x1="0" y1="220" x2="520" y2="220"/>
+        </g>
+        <path class="hum" d="M10 190 C35 120 55 240 85 170 S135 100 165 160 S215 230 245 150"/>
+        <rect class="note" x="275" y="173" width="46" height="14" rx="4"/>
+        <rect class="note" x="327" y="133" width="34" height="14" rx="4"/>
+        <rect class="note" x="367" y="93" width="56" height="14" rx="4"/>
+        <rect class="note" x="429" y="133" width="34" height="14" rx="4"/>
+        <rect class="note" x="469" y="173" width="40" height="14" rx="4"/>
+        <line class="scan" x1="0" y1="44" x2="0" y2="236"/>
+        <text class="nl" x="277" y="165" style="animation-delay:2s">Do4</text>
+        <text class="nl" x="329" y="125" style="animation-delay:2.15s">Mi4</text>
+        <text class="nl" x="369" y="85" style="animation-delay:2.3s">Sol4</text>
+        <text class="nl" x="431" y="125" style="animation-delay:2.45s">Mi4</text>
+        <text class="nl" x="471" y="165" style="animation-delay:2.6s">Do4</text>
+        <text class="ro" x="10" y="24">▸ Análisis · simulación</text>
+        <text class="ro" x="510" y="24" text-anchor="end">5 notas detectadas</text>
+        <text x="10" y="270">Tu tarareo</text>
+        <text x="275" y="270">Tus notas, exactas</text>
+      </svg>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Las otras plataformas reinterpretan tu idea. Jedutun la respeta.</h2>
+      <div class="contrast">
+        <div>
+          <h3>Lo que pasa hoy</h3>
+          <p>Subes un tarareo y la IA lo toma como inspiración. Te devuelve algo parecido, con notas y acordes que no son los tuyos.</p>
+        </div>
+        <div class="us">
+          <h3>Lo que hace Jedutun</h3>
+          <p>Primero entiende exactamente lo que cantaste o tocaste. Tú revisas y corriges las notas. Solo entonces suenan con instrumentos de calidad profesional.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>De la idea a la pista en cuatro pasos</h2>
+      <ol class="steps">
+        <li><h3>Graba tu idea</h3><p>Canta, tararea o toca tu guitarra. Desde el móvil o el ordenador.</p></li>
+        <li><h3>Revisa las notas</h3><p>Ves cada nota y cada acorde detectado y corriges lo que haga falta.</p></li>
+        <li><h3>Elige el sonido</h3><p>Piano, cuerdas, bajo… y escribe cómo lo quieres: «suave, estilo balada».</p></li>
+        <li><h3>Descarga tu pista</h3><p>Audio para escuchar y MIDI para seguir trabajando en tu estudio.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Hecho para quien compone sin un estudio completo</h2>
+      <p style="max-width:34em;color:var(--muted)">Si tienes melodías en la cabeza pero no controlador MIDI, plugins de batería ni años de producción, Jedutun pone el oficio de producir al servicio de tu música, no al revés.</p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <h2>Sé de los primeros en probarlo</h2>
+      <p>Estamos construyendo Jedutun con músicos. Apúntate y te avisamos cuando abra la beta.</p>
+      <p class="perk">Los 100 primeros en apuntarse serán <strong>Pioneros</strong>, con mayores beneficios que el resto.</p>
+      <form class="signup" action="https://formspree.io/f/xvkavpdo" method="POST" novalidate>
+        <p class="tag">Lista de espera</p>
+        <label class="sr" for="email-2">Tu correo electrónico</label>
+        <input id="email-2" name="email" type="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com">
+        <button type="submit">Quiero acceso anticipado</button>
+        <p class="msg" role="status">Sin spam. Puedes darte de baja cuando quieras.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Jedutun. Todos los derechos reservados.</div>
+</footer>
+
+<script>
+document.querySelectorAll('.signup').forEach(function(f){
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var m = f.querySelector('.msg');
+    var em = f.querySelector('input[type=email]');
+    m.className = 'msg';
+    if(!em.checkValidity()){ m.className = 'msg err'; m.textContent = 'Escribe un correo válido, por ejemplo nombre@correo.com.'; em.focus(); return; }
+    try{
+      var r = await fetch(f.action, {method:'POST', body:new FormData(f), headers:{Accept:'application/json'}});
+      if(!r.ok){ throw new Error('x'); }
+      f.reset();
+      m.className = 'msg ok';
+      m.textContent = '✓ Listo. Te avisaremos cuando abra la beta.';
+    }catch(err){
+      m.className = 'msg err';
+      m.textContent = 'No se pudo enviar. Inténtalo de nuevo en unos minutos.';
+    }
+  });
+});
+
+/* Red neuronal de fondo */
+(function(){
+  var c = document.getElementById('net'); if(!c) return;
+  var x = c.getContext('2d'), W, H, P = [], raf;
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function size(){
+    var d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    c.width = W * d; c.height = H * d;
+    x.setTransform(d, 0, 0, d, 0, 0);
+    var n = Math.round(Math.min(70, W * H / 22000)); P = [];
+    for(var i = 0; i < n; i++) P.push({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25});
+  }
+  function draw(){
+    x.clearRect(0, 0, W, H);
+    for(var i = 0; i < P.length; i++){
+      var a = P[i];
+      if(!reduce){ a.x += a.vx; a.y += a.vy; if(a.x < 0 || a.x > W) a.vx *= -1; if(a.y < 0 || a.y > H) a.vy *= -1; }
+      for(var j = i + 1; j < P.length; j++){
+        var b = P[j], dx = a.x - b.x, dy = a.y - b.y, d = dx*dx + dy*dy;
+        if(d < 19600){
+          x.strokeStyle = 'rgba(61,224,255,' + (0.16 * (1 - d/19600)) + ')';
+          x.lineWidth = 1; x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke();
+        }
+      }
+      x.fillStyle = (i % 2) ? 'rgba(61,224,255,.45)' : 'rgba(255,214,10,.45)'; x.beginPath(); x.arc(a.x, a.y, 1.6, 0, 6.283); x.fill();
+    }
+    if(!reduce && !document.hidden) raf = requestAnimationFrame(draw);
+  }
+  size(); draw();
+  addEventListener('resize', function(){ size(); if(reduce) draw(); });
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden && !reduce){ cancelAnimationFrame(raf); draw(); } });
+})();
+
+/* Línea de terminal que se escribe sola */
+(function(){
+  var el = document.getElementById('typed'); if(!el) return;
+  var L = ['> escuchando tu tarareo…', '> detectando notas y acordes…', '> sin cambiar ni una nota'];
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){ el.textContent = L[2]; return; }
+  var i = 0, j = 0, del = false;
+  function t(){
+    var s = L[i];
+    if(!del){
+      j++; el.textContent = s.slice(0, j);
+      if(j === s.length){ del = true; return setTimeout(t, 1800); }
+      return setTimeout(t, 45);
+    }
+    j--; el.textContent = s.slice(0, j);
+    if(j === 0){ del = false; i = (i + 1) % L.length; return setTimeout(t, 350); }
+    return setTimeout(t, 22);
+  }
+  t();
+})();
+</script>
+</body>
+</html>
